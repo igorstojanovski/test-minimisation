@@ -2,6 +2,8 @@ package co.igorski;
 
 import co.igorski.model.TestEncoding;
 import co.igorski.model.TestSuite;
+import co.igorski.similarity.JaccardValuesCalculator;
+import co.igorski.similarity.SimilarityCalculator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,7 +11,12 @@ import java.util.*;
 
 public class KeyWordBasedMinimiser implements TestSuiteMinimiser {
     private static final Logger LOGGER = LoggerFactory.getLogger(KeyWordBasedMinimiser.class);
+    private final SimilarityCalculator similarityCalculator;
     private Map<String, Set<String>> testKeywords = new HashMap<>();
+
+    public KeyWordBasedMinimiser(JaccardValuesCalculator jaccardValuesCalculator) {
+        this.similarityCalculator = jaccardValuesCalculator;
+    }
 
     @Override
     public Set<String> minimise(TestSuite testSuite, int suiteSize) {
@@ -26,7 +33,7 @@ public class KeyWordBasedMinimiser implements TestSuiteMinimiser {
         printCurrentJaccardValues();
 
         while(testKeywords.keySet().size() > suiteSize) {
-            Map<String, Map<String, Float>> jaccardValues = getJaccardValues();
+            Map<String, Map<String, Float>> jaccardValues = similarityCalculator.calculateSimilarity(testKeywords);
             String idToRemove = removeMostSimilar(jaccardValues);
             testKeywords.remove(idToRemove);
         }
@@ -39,7 +46,7 @@ public class KeyWordBasedMinimiser implements TestSuiteMinimiser {
     }
 
     private void printCurrentJaccardValues() {
-        Map<String, Map<String, Float>> jaccardValues = getJaccardValues();
+        Map<String, Map<String, Float>> jaccardValues = similarityCalculator.calculateSimilarity(testKeywords);
         ArrayList<String> sortedKeys = new ArrayList<>(testKeywords.keySet());
         Collections.sort(sortedKeys);
 
@@ -68,38 +75,5 @@ public class KeyWordBasedMinimiser implements TestSuiteMinimiser {
         }
 
         return maxId;
-    }
-
-    private Map<String, Map<String, Float>> getJaccardValues() {
-        Map<String, Map<String, Float>> jaccardIndex = new HashMap<>();
-        List<String> pastIds = new ArrayList<>();
-
-        ArrayList<String> sortedKeys = new ArrayList<>(testKeywords.keySet());
-        Collections.sort(sortedKeys);
-
-        for(String outerKey : sortedKeys) {
-            pastIds.add(outerKey);
-            Set<String> outerSet = testKeywords.get(outerKey);
-
-            Map<String, Float> jaccardValues = new HashMap<>();
-
-            for(String innerKey : sortedKeys) {
-                if(!pastIds.contains(innerKey)) {
-                    Set<String> innerSet = testKeywords.get(innerKey);
-                    HashSet<String> intersectionSet = new HashSet<>(outerSet);
-                    intersectionSet.retainAll(innerSet);
-
-                    HashSet<String> unionSet = new HashSet<>(outerSet);
-                    unionSet.addAll(innerSet);
-
-                    jaccardValues.put(innerKey, (float)intersectionSet.size()/(float)unionSet.size());
-                }
-            }
-
-            if(!jaccardValues.isEmpty()) {
-                jaccardIndex.put(outerKey, jaccardValues);
-            }
-        }
-        return jaccardIndex;
     }
 }
