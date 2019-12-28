@@ -61,7 +61,7 @@ class KeyWordBasedMinimiserTest {
         testEncoding.setEncoding("<<user>>, app, button, click, confirm, home, in, is, logged, login, logout, press, screen, shown, successfully, the");
         testSuite.addTestEncoding(testEncoding);
 
-        keyWordBasedMinimiser.minimise(testSuite);
+        keyWordBasedMinimiser.minimise(testSuite, 2);
     }
 
 }

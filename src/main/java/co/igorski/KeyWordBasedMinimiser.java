@@ -8,12 +8,9 @@ import java.util.*;
 public class KeyWordBasedMinimiser implements TestSuiteMinimiser {
 
     private Map<String, Set<String>> testKeywords = new HashMap<>();
-    private Map<String, Map<String, Integer>> intersections = new HashMap<>();
-    private Map<String, Map<String, Integer>> unions = new HashMap<>();
-    private Map<String, Map<String, Float>> jaccardIndex = new HashMap<String, Map<String, Float>>();
 
     @Override
-    public TestSuite minimise(TestSuite testSuite) {
+    public TestSuite minimise(TestSuite testSuite, int suiteSize) {
 
         Map<String, TestEncoding> encodings = testSuite.getTestEncodings();
 
@@ -23,6 +20,54 @@ public class KeyWordBasedMinimiser implements TestSuiteMinimiser {
             testKeywords.put(entry.getKey(), keywords);
         }
 
+        System.out.println("-----------------------------------");
+        printCurrentJaccardValues();
+
+        while(testKeywords.keySet().size() > suiteSize) {
+            Map<String, Map<String, Float>> jaccardValues = getJaccardValues();
+            String idToRemove = removeMostSimilar(jaccardValues);
+            testKeywords.remove(idToRemove);
+        }
+
+        System.out.println("-----------------------------------");
+        printCurrentJaccardValues();
+
+        return null;
+    }
+
+    private void printCurrentJaccardValues() {
+        Map<String, Map<String, Float>> jaccardValues = getJaccardValues();
+        ArrayList<String> sortedKeys = new ArrayList<>(testKeywords.keySet());
+        Collections.sort(sortedKeys);
+
+        for(String key : sortedKeys) {
+            System.out.print(key + " ");
+            System.out.println(jaccardValues.get(key));
+        }
+    }
+
+    private String removeMostSimilar(Map<String, Map<String, Float>> jaccardValues) {
+        Float max = 0.0F;
+        String maxId = "";
+        for (Map.Entry<String, Map<String, Float>> outerEntry : jaccardValues.entrySet()) {
+            Map<String, Float> outerValue = outerEntry.getValue();
+            String outerKey = outerEntry.getKey();
+
+            for(Map.Entry<String, Float> innerEntry : outerValue.entrySet()) {
+                if(innerEntry.getValue() > max) {
+                    max = innerEntry.getValue();
+                    maxId = testKeywords.get(innerEntry.getKey()).size() < testKeywords.get(outerKey).size()
+                            ? innerEntry.getKey()
+                            : outerKey;
+                }
+            }
+        }
+
+        return maxId;
+    }
+
+    private Map<String, Map<String, Float>> getJaccardValues() {
+        Map<String, Map<String, Float>> jaccardIndex = new HashMap<>();
         List<String> pastIds = new ArrayList<>();
 
         ArrayList<String> sortedKeys = new ArrayList<>(testKeywords.keySet());
@@ -32,8 +77,6 @@ public class KeyWordBasedMinimiser implements TestSuiteMinimiser {
             pastIds.add(outerKey);
             Set<String> outerSet = testKeywords.get(outerKey);
 
-            Map<String, Integer> intersectionValues = new HashMap<>();
-            Map<String, Integer> unionValues = new HashMap<>();
             Map<String, Float> jaccardValues = new HashMap<>();
 
             for(String innerKey : sortedKeys) {
@@ -41,11 +84,9 @@ public class KeyWordBasedMinimiser implements TestSuiteMinimiser {
                     Set<String> innerSet = testKeywords.get(innerKey);
                     HashSet<String> intersectionSet = new HashSet<>(outerSet);
                     intersectionSet.retainAll(innerSet);
-                    intersectionValues.put(innerKey, intersectionSet.size());
 
                     HashSet<String> unionSet = new HashSet<>(outerSet);
                     unionSet.addAll(innerSet);
-                    unionValues.put(innerKey, unionSet.size());
 
                     jaccardValues.put(innerKey, (float)intersectionSet.size()/(float)unionSet.size());
                 }
@@ -54,21 +95,7 @@ public class KeyWordBasedMinimiser implements TestSuiteMinimiser {
             if(!jaccardValues.isEmpty()) {
                 jaccardIndex.put(outerKey, jaccardValues);
             }
-
-            if(!intersectionValues.isEmpty()) {
-                intersections.put(outerKey, intersectionValues);
-                unions.put(outerKey, unionValues);
-            }
         }
-
-
-
-
-        for(String outerKey : sortedKeys) {
-            System.out.print(outerKey + " ");
-            System.out.println(jaccardIndex.get(outerKey));
-        }
-
-        return null;
+        return jaccardIndex;
     }
 }
