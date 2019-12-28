@@ -2,22 +2,24 @@ package co.igorski;
 
 import co.igorski.model.TestEncoding;
 import co.igorski.model.TestSuite;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
 public class KeyWordBasedMinimiser implements TestSuiteMinimiser {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(KeyWordBasedMinimiser.class);
     private Map<String, Set<String>> testKeywords = new HashMap<>();
 
     @Override
-    public TestSuite minimise(TestSuite testSuite, int suiteSize) {
+    public Set<String> minimise(TestSuite testSuite, int suiteSize) {
 
-        Map<String, TestEncoding> encodings = testSuite.getTestEncodings();
+        List<TestEncoding> encodings = testSuite.getTestEncodings();
 
-        for(Map.Entry<String, TestEncoding> entry : encodings.entrySet()) {
-            String encoding = entry.getValue().getEncoding();
+        for(TestEncoding testEncoding : encodings) {
+            String encoding = testEncoding.getEncoding();
             Set<String> keywords = new HashSet<>(Arrays.asList(encoding.split(", ")));
-            testKeywords.put(entry.getKey(), keywords);
+            testKeywords.put(testEncoding.getTestId(), keywords);
         }
 
         System.out.println("-----------------------------------");
@@ -32,7 +34,8 @@ public class KeyWordBasedMinimiser implements TestSuiteMinimiser {
         System.out.println("-----------------------------------");
         printCurrentJaccardValues();
 
-        return null;
+        LOGGER.info(String.valueOf(testKeywords.keySet()));
+        return testKeywords.keySet();
     }
 
     private void printCurrentJaccardValues() {
@@ -40,9 +43,10 @@ public class KeyWordBasedMinimiser implements TestSuiteMinimiser {
         ArrayList<String> sortedKeys = new ArrayList<>(testKeywords.keySet());
         Collections.sort(sortedKeys);
 
-        for(String key : sortedKeys) {
-            System.out.print(key + " ");
-            System.out.println(jaccardValues.get(key));
+        if(LOGGER.isTraceEnabled()) {
+            for(String key : sortedKeys) {
+                LOGGER.trace(key + " " + jaccardValues.get(key));
+            }
         }
     }
 

@@ -2,6 +2,8 @@ package co.igorski;
 
 import co.igorski.model.TestSuite;
 
+import java.util.Set;
+
 public interface TestSuiteMinimiser {
-    TestSuite minimise(TestSuite testSuite, int suiteSize);
+    Set<String> minimise(TestSuite testSuite, int suiteSize);
 }

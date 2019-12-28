@@ -1,0 +1,44 @@
+{
+ "testEncodings": [
+  {
+   "testId": "TC_001",
+   "encoding": "<<valid_user.email>>, <<valid_user.pwd>>, <<valid_user>>, access, app, button, field, home, in, is, login, mymovieapp, password, press, registered, screen, shown, the, type, user"
+  },
+  {
+   "testId": "TC_002",
+   "encoding": "<<invalid_user.mail>>, <<invalid_user.pwd>>, <<invalid_user>>, access, button, field, in, is, login, message, mymovieapp, not, password, press, registered, registered”, shown, the, type, user, “user"
+  },
+  {
+   "testId": "TC_003",
+   "encoding": "<<movie>>, <<user>>, <<user>>’s, add, added, app, button, choose, click, created, entry, feature, field, home, in, is, logged, main, manual, message, movie, movies, not, of, press, profile, screen, shown, successfully, table, the, title, type, updated, was, yet"
+  },
+  {
+   "testId": "TC_004",
+   "encoding": "<<movie>>, <<movie_url>>, <<user>>, <<user>>’s, accessible, add, added, app, button, choose, click, created, feature, field, from, home, imdb, import, in, internet, is, logged, main, message, movie, movies, not, of, press, profile, screen, shown, successfully, table, the, title, type, updated, via, was, yet"
+  },
+  {
+   "testId": "TC_005",
+   "encoding": "<<cast.movies>>, <<cast.name>>, <<cast>>, <<user>>, <<user>>’s, actor/actress, add, added, app, button, cast, choose, click, created, entry, feature, field, home, in, is, logged, main, manual, members, message, movie, name, not, of, press, profile, screen, shown, successfully, table, the, title, type, updated, was, yet"
+  },
+  {
+   "testId": "TC_006",
+   "encoding": "<<cast.url>>, <<cast>>, <<user>>, <<user>>’s, actor/actress, add, added, app, button, cast, choose, click, created, feature, field, from, home, imdb, import, in, is, logged, main, members, message, movie, not, of, press, profile, screen, shown, successfully, table, the, type, updated, url, was, yet"
+  },
+  {
+   "testId": "TC_007",
+   "encoding": "<<movie.title>>, <<movie>>, <<user>>, <<user>>’s, a, app, button, by, choose, click, created, delete, deleted, dialog, feature, field, home, in, is, logged, main, message, movie, movies, of, press, profile, screen, shown, shows, successfully, table, the, title, type, updated, was"
+  },
+  {
+   "testId": "TC_008",
+   "encoding": "<<cast.movies>>, <<cast.name>>, <<cast>>, <<user>>, <<user>>’s, a, actor/actress, app, at, button, by, cast, choose, click, created, delete, deleted, dialog, feature, field, from, home, in, is, least, logged, main, member, message, movie, movies, of, one, press, profile, screen, shown, shows, successfully, table, the, title, type, updated, was"
+  },
+  {
+   "testId": "TC_009",
+   "encoding": "<<movie.year>>, <<movies>>, <<user>>, <<user>>’s, a, app, button, click, created, deleted, dialog, field, home, in, is, logged, main, message, movie, movies, of, press, profile, screen, search, shown, shows, successfully, table, the, type, updated, was, year"
+  },
+  {
+   "testId": "TC_010",
+   "encoding": "<<user>>, app, button, click, confirm, home, in, is, logged, login, logout, press, screen, shown, successfully, the"
+  }
+ ]
+}

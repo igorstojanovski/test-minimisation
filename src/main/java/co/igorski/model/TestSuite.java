@@ -3,15 +3,28 @@ package co.igorski.model;
 import java.util.HashMap;
 import java.util.Map;
 
+import java.util.List;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonPropertyOrder({
+        "testEncodings"
+})
 public class TestSuite {
 
-    Map<String, TestEncoding> testEncodings = new HashMap<>();
+    @JsonProperty("testEncodings")
+    private List<TestEncoding> testEncodings = null;
 
-    public void addTestEncoding(TestEncoding testEncoding) {
-        testEncodings.put(testEncoding.getTestId(), testEncoding);
-    }
-
-    public Map<String, TestEncoding> getTestEncodings() {
+    @JsonProperty("testEncodings")
+    public List<TestEncoding> getTestEncodings() {
         return testEncodings;
     }
+
+    @JsonProperty("testEncodings")
+    public void setTestEncodings(List<TestEncoding> testEncodings) {
+        this.testEncodings = testEncodings;
+    }
+
 }
